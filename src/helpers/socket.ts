@@ -35,9 +35,9 @@ export const setupSocket = (server: HttpServer) => {
                 return;
             }
             try {
-                // const newMessage = await chatRepository.saveMessage(chatId, sender, message);
-                // await chatRepository.updateChatLastMessage(chatId, message);
-                // io.to(chatId).emit('newMessage', newMessage);
+                const newMessage = await chatRepository.saveMessage(chatId, sender, message);
+                await chatRepository.updateChatLastMessage(chatId, message);
+                io.to(chatId).emit('newMessage', newMessage);
             } catch (error) {
                 if (error instanceof Error)
                     console.error('Error handling sendMessage:', error.message);
