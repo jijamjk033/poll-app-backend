@@ -1,10 +1,12 @@
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { chatRepository } from '../repositories/chatRepository';
+import { IChatRepository } from '../abstraction/chatAbstract';
+import { ChatRepository } from '../repositories/chatRepository';
 
 let io: Server
 const userSocketMap = new Map();
 const userStatusMap = new Map();
+const chatRepository = new ChatRepository();
 
 export const setupSocket = (server: HttpServer) => {
     io = new Server(server, {

@@ -7,6 +7,7 @@ import { setupSocket } from './helpers/socket';
 import router from './routes/routes';
 import passport from 'passport';
 import session from 'express-session';
+import { ChatRepository } from './repositories/chatRepository';
 
 const PORT = process.env.PORT || 5000;
 dotenv.config();

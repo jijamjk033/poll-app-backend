@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 
+export interface IMessage {
+  chatId: string;
+  sender: string;
+  text: string;
+  fileUrl: string;
+  messageType: string;
+  timestamp: Date;
+}
+
 const MessageSchema = new mongoose.Schema({
   chatId: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
   sender: String,

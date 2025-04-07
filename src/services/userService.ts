@@ -1,14 +1,21 @@
+import { IUserRepository, IUserService } from "../abstraction/userAbstract";
 import { IUser } from "../models/userModel";
-import { userRepository } from "../repositories/userRepository";
+import { UserRepository } from "../repositories/userRepository";
 
-class UserService {
+class UserService implements IUserService {
+
+    private userRepository:IUserRepository;
+    constructor(userRepo:IUserRepository){
+        this.userRepository = userRepo;
+    };
+
 
     async loginWithGoogle(googleUser: any) {
-        let user = await userRepository.findByGoogleId(googleUser.googleId);
+        let user = await this.userRepository.findByGoogleId(googleUser.googleId);
         if (!user) {
-            user = await userRepository.findUserByEmail(googleUser.email);
+            user = await this.userRepository.findUserByEmail(googleUser.email);
             if (!user) {
-                user = await userRepository.createUser({
+                user = await this.userRepository.createUser({
                     googleId: googleUser.googleId,
                     name: googleUser.name,
                     email: googleUser.email,
@@ -20,9 +27,9 @@ class UserService {
     }
 
     async searchUsers(query: string) {
-        return await userRepository.searchUsers(query);
+        return await this.userRepository.searchUsers(query);
     }
 
 }
-
-export const userService = new UserService();
+const userRepository = new UserRepository();
+export const userService = new UserService(userRepository);

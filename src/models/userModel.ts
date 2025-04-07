@@ -1,39 +1,25 @@
-import mongoose, { Document } from "mongoose";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { Document, Schema, model } from "mongoose";
 
 export interface IUser {
-    googleId: {};
+    googleId: string;
     name: string;
     email: string;
-    picture?: string;
-    createdAt: Date;
-    updatedAt: Date;
+    status: "online" | "offline";
+    picture?: string | null;
 }
 
-const userSchema = new mongoose.Schema(
+export interface UserDocument extends IUser, Document {}
+
+const userSchema = new Schema<UserDocument>(
     {
-        googleId: {
-            type: String,
-            required: true
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true
-        },
-        picture: {
-            type: String
-        },
+        googleId: { type: String, required: true, unique: true },
+        name: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
         status: { type: String, enum: ["online", "offline"], default: "offline" },
+        picture: { type: String, default: null },
     },
-    {
-        timestamps: true,
-    }
+    { timestamps: true }
 );
 
-export const User = mongoose.model('User', userSchema);
+const User = model<UserDocument>("User", userSchema);
+export default User;

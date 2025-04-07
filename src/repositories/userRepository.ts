@@ -1,38 +1,34 @@
-import { IUser, User } from "../models/userModel";
+import { IUserRepository } from "../abstraction/userAbstract";
+import User, { IUser, UserDocument } from "../models/userModel";
+import { BaseRepository } from "./baseRepository";
 
-class UserRepository {
-    async findUserByEmail(email: string) {
-        const user = await User.findOne({ email: email }) as IUser | null;
-
-        if (!user) {
-            return null;
-        }
-        return user;
+export class UserRepository extends BaseRepository<UserDocument> implements IUserRepository {
+    constructor() {
+        super(User);
+    }
+    async findUserByEmail(email: string): Promise<IUser | null> {
+        return await this.model.findOne({ email }).lean();
     }
 
-    async findByGoogleId(googleId: string) {
-        const user = await User.findOne({ googleId }) as IUser | null;
-
-        if (!user) {
-            return null;
-        }
-        return user;
+    async findByGoogleId(googleId: string): Promise<IUser | null> {
+        return await this.model.findOne({ googleId }).lean();
     }
 
-    async createUser(userData: Partial<IUser>) {
-        const user = new User(userData);
+    async createUser(userData: Partial<IUser>): Promise<IUser> {
+        const user = new this.model(userData);
         const savedUser = await user.save();
-        return savedUser.toObject() as unknown as IUser;
+        return savedUser.toObject();
     }
 
-    async searchUsers(query: string) {
-        return await User.find({
-            $or: [
-                { name: { $regex: query, $options: "i" } },
-                { email: { $regex: query, $options: "i" } }
-            ]
-        }).select("name email picture");
+    async searchUsers(query: string): Promise<IUser[]> {
+        return await this.model
+            .find({
+                $or: [
+                    { name: { $regex: query, $options: "i" } },
+                    { email: { $regex: query, $options: "i" } },
+                ],
+            })
+            .select("name email picture")
+            .lean();
     }
 }
-
-export const userRepository = new UserRepository();
