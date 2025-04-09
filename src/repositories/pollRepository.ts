@@ -1,5 +1,5 @@
 import { IPollRepository } from "../abstraction/pollAbstract";
-import { IPoll, IPollDocument, Poll } from "../models/poll";
+import { CreatePollDTO, IPoll, IPollDocument, Poll } from "../models/poll";
 import { BaseRepository } from "./baseRepository";
 
 export class PollRepository extends BaseRepository<IPollDocument> implements IPollRepository {
@@ -7,8 +7,18 @@ export class PollRepository extends BaseRepository<IPollDocument> implements IPo
         super(Poll);
     }
 
-    async createPoll(data: IPoll) {
-        return this.create(data);
+    async createPoll(data: CreatePollDTO) {
+        const { question, pollType, options } = data;
+        let updatedOptions = options.map((text) => ({
+            text,
+            votes: 0,
+        }));
+        const pollData = {
+            question,
+            pollType,
+            options:updatedOptions,
+        };
+        return this.create(pollData);
     }
 
     async getPolls() {
@@ -17,5 +27,9 @@ export class PollRepository extends BaseRepository<IPollDocument> implements IPo
 
     async getPollsById(id: string) {
         return this.findById(id);
+    }
+
+    async savePoll(poll: IPollDocument) {
+        return poll.save();
     }
 }

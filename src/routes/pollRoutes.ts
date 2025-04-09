@@ -5,5 +5,7 @@ const router = express.Router();
 router.post('/createPoll',pollController.createPoll.bind(pollController));
 router.get('/getPolls',pollController.getPolls.bind(pollController));
 router.get('/getPollsById', pollController.getPollsById.bind(pollController));
+router.post('/vote', pollController.saveVote.bind(pollController));
+
 
 export default router;

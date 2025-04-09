@@ -1,6 +1,6 @@
 import { error } from "console";
 import { IPollRepository, IPollService } from "../abstraction/pollAbstract";
-import { IPoll } from "../models/poll";
+import { CreatePollDTO, IPoll, IPollOption } from "../models/poll";
 import { PollRepository } from "../repositories/pollRepository";
 
 export class PollService implements IPollService {
@@ -9,7 +9,7 @@ export class PollService implements IPollService {
         this.pollRepository = pollRepo;
     }
 
-    async createPoll(data: IPoll) {
+    async createPoll(data: CreatePollDTO) {
         try {
             const poll = this.pollRepository.createPoll(data);
             if (!poll) {
@@ -20,7 +20,7 @@ export class PollService implements IPollService {
             throw new Error(`Failed to create poll: ${err instanceof Error ? err.message : err}`);
         }
     }
-    
+
     async getPolls() {
         try {
             const polls = this.pollRepository.getPolls();
@@ -44,6 +44,20 @@ export class PollService implements IPollService {
             throw new Error(`Failed to find poll: ${err instanceof Error ? err.message : err}`);
         }
     }
+
+    async saveVote(pollId: string, selectedOption: IPollOption) {
+        const poll = await this.pollRepository.getPollsById(pollId);
+        if (!poll) throw new Error('Poll not found');
+        const option = poll.options.find(opt => opt.text === selectedOption.text);
+        if (!option) throw new Error('Option not found');
+        if (option.votes != null) {
+            option.votes += 1;
+        } else {
+            option.votes = 1;
+        }
+        return this.pollRepository.savePoll(poll);
+    }
+
 }
 
 const pollRepository = new PollRepository();

@@ -12,8 +12,6 @@ export class PollController implements IPollController {
 
     async createPoll(req: Request, res: Response) {
         try {
-            console.log(req.body);
-            
             const poll = await this.pollService.createPoll(req.body);
             res.status(StatusCodes.OK).json(createSuccessResponse(poll, "Poll created succesfully"));
         } catch (err) {
@@ -21,20 +19,30 @@ export class PollController implements IPollController {
         }
     }
 
-    async getPolls(req: Request, res: Response){
-        try{
+    async getPolls(req: Request, res: Response) {
+        try {
             const polls = await this.pollService.getPolls();
-            res.status(StatusCodes.OK).json(createSuccessResponse(polls,'Polls fetched successfully'))
-        }catch(err){
+            res.status(StatusCodes.OK).json(createSuccessResponse(polls, 'Polls fetched successfully'))
+        } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(createErrorResponse('Internal Server Error'));
         }
     }
 
-    async getPollsById(req: Request, res: Response){
-        try{
+    async getPollsById(req: Request, res: Response) {
+        try {
             const poll = await this.pollService.getPollsById(req.params.id);
-            res.status(StatusCodes.OK).json(createSuccessResponse(poll,'Poll fetched successfully'));
-        }catch(err){
+            res.status(StatusCodes.OK).json(createSuccessResponse(poll, 'Poll fetched successfully'));
+        } catch (err) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(createErrorResponse('Internal Server Error'));
+        }
+    }
+
+    async saveVote(req: Request, res: Response) {
+        try {
+            const { pollId, selectedOption } = req.body;
+            const updatedPoll = await this.pollService.saveVote(pollId, selectedOption);
+            res.status(StatusCodes.OK).json(createSuccessResponse(updatedPoll, 'Poll updated successfully'));
+        } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(createErrorResponse('Internal Server Error'));
         }
     }
