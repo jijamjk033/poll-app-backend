@@ -28,9 +28,9 @@ app.use(session({
 }));
 
 const corsOption = {
-    origin: process.env.Frontend_URL,
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
+    credentials: false,
     optionsSuccessStatus: 200,
 };
 
